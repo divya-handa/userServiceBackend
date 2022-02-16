@@ -13,7 +13,7 @@ import javax.persistence.*;
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(value = JsonInclude.Include.NON_EMPTY)
 @Entity
-@Table(name = "user")
+@Table(name = "usera")
 public class User implements Serializable {
 
 	@Id
