@@ -1,40 +1,46 @@
 package com.nagp.devops.user.entities;
 
+import java.io.Serializable;
 import java.util.Objects;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-@JsonIgnoreProperties(ignoreUnknown = true)
-public class User {
+import javax.persistence.*;
 
-	private final UserKey userKey;
+@JsonIgnoreProperties(ignoreUnknown = true)
+@JsonInclude(value = JsonInclude.Include.NON_EMPTY)
+@Entity
+@Table(name = "user")
+public class User implements Serializable {
+
+	@Id
+	@GeneratedValue(strategy = GenerationType.AUTO)
+	private final Long userId;
+	@Column(name = "userName")
 	private final String userName;
+	@Column(name = "address")
 	private final String address;
+	@Column(name = "areaCode")
 	private final String areaCode;
-	private final UserType userType;
-	private final Contact contact;
+	@Column(name = "vaccinated")
 	private final boolean vaccinated;
-	private final UserState userState;
 
 	@JsonCreator
-	public User(@JsonProperty("userKey") UserKey userKey, @JsonProperty("userName") String userName,
+	public User(@JsonProperty("userId") Long userId, @JsonProperty("userName") String userName,
 			@JsonProperty("address") String address, @JsonProperty("areaCode") String areaCode,
-			@JsonProperty("userType") UserType userType, @JsonProperty("contact") Contact contact,
-			@JsonProperty("vaccinated") boolean vaccinated, @JsonProperty("userState") UserState userState) {
-		this.userKey = userKey;
+			@JsonProperty("vaccinated") boolean vaccinated) {
+		this.userId = userId;
 		this.userName = userName;
 		this.address = address;
 		this.areaCode = areaCode;
-		this.userType = Objects.isNull(userType) ? UserType.GUEST : userType;
-		this.contact = contact;
 		this.vaccinated = vaccinated;
-		this.userState = Objects.isNull(userState) ? UserState.UNKNOWN : userState;
 	}
 
-	public UserKey getUserKey() {
-		return userKey;
+	public Long getUserId() {
+		return userId;
 	}
 
 	public String getUserName() {
@@ -49,25 +55,13 @@ public class User {
 		return areaCode;
 	}
 
-	public UserType getUserType() {
-		return userType;
-	}
-
-	public Contact getContact() {
-		return contact;
-	}
-
 	public boolean isVaccinated() {
 		return vaccinated;
 	}
 
-	public UserState getUserState() {
-		return userState;
-	}
-
 	@Override
 	public int hashCode() {
-		return Objects.hash(address, areaCode, contact, userKey, userName, userType, vaccinated, userState);
+		return Objects.hash(address, areaCode, userId, userName, vaccinated);
 	}
 
 	@Override
@@ -80,16 +74,14 @@ public class User {
 			return false;
 		User other = (User) obj;
 		return Objects.equals(address, other.address) && Objects.equals(areaCode, other.areaCode)
-				&& Objects.equals(contact, other.contact) && Objects.equals(userKey, other.userKey)
-				&& Objects.equals(userName, other.userName) && userType == other.userType
-				&& vaccinated == other.vaccinated && userState == other.userState;
+				&& Objects.equals(userId, other.userId) && Objects.equals(userName, other.userName)
+				&& vaccinated == other.vaccinated;
 	}
 
 	@Override
 	public String toString() {
-		return "User [userKey=" + userKey + ", userName=" + userName + ", address=" + address + ", areaCode=" + areaCode
-				+ ", userType=" + userType + ", contact=" + contact + ", vaccinated=" + vaccinated + ", userState="
-				+ userState + "]";
+		return "User [userId=" + userId + ", userName=" + userName + ", address=" + address + ", areaCode=" + areaCode
+				+ ", vaccinated=" + vaccinated + "]";
 	}
 
 }

@@ -7,7 +7,6 @@ import java.util.Objects;
 import javax.annotation.Resource;
 
 import com.nagp.devops.user.entities.User;
-import com.nagp.devops.user.entities.UserKey;
 import com.nagp.devops.user.services.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,7 +34,7 @@ public class UserController {
 	public ResponseEntity<?> create(@RequestBody final User user) {
 		try {
 			final User createdUser = userService.create(user);
-			logger.debug("Successfully created user with {}", createdUser.getUserKey());
+			logger.debug("Successfully created user with {}", createdUser.getUserId());
 			return new ResponseEntity<User>(createdUser, HttpStatus.CREATED);
 		} catch (Exception e) {
 			logger.error(e.getMessage());
@@ -46,15 +45,14 @@ public class UserController {
 	@GetMapping(value = "/userId/{user_id}")
 	public ResponseEntity<?> get(@PathVariable(name = "user_id") String userId) {
 		logger.debug("Received request to fetch user details for userId: {}" + userId);
-		final UserKey requestedUserKey = UserKey.userKey(userId);
 		try {
-			final User retrievedUser = userService.get(requestedUserKey);
+			final User retrievedUser = userService.get(Long.valueOf(userId));
 			if (Objects.nonNull(retrievedUser)) {
 				logger.info("Retrieved User : {}", retrievedUser);
 				return new ResponseEntity<User>(retrievedUser, HttpStatus.OK);
 			}
-			logger.info("Failed to retrieve user for :{}", requestedUserKey);
-			return new ResponseEntity<>("Failed to retrieve user for :" + requestedUserKey, HttpStatus.NOT_FOUND);
+			logger.info("Failed to retrieve user for :{}", userId);
+			return new ResponseEntity<>("Failed to retrieve user for :" + userId, HttpStatus.NOT_FOUND);
 		} catch (Exception e) {
 			logger.error(e.getMessage());
 			return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
@@ -92,9 +90,8 @@ public class UserController {
 	public ResponseEntity<?> delete(@PathVariable(name = "user_id") String userId) {
 		try {
 			logger.debug("Received request to delete user for userId: {}" + userId);
-			final UserKey requestedUserKey = UserKey.userKey(userId);
-			userService.delete(requestedUserKey);
-			logger.debug("Successfully updated user with {}", requestedUserKey);
+			userService.delete(Long.valueOf(userId));
+			logger.debug("Successfully updated user with {}", userId);
 			return new ResponseEntity<>(HttpStatus.NO_CONTENT);
 		} catch (NoSuchElementException e) {
 			logger.error(e.getMessage());
