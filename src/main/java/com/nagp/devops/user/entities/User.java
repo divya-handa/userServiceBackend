@@ -18,16 +18,17 @@ public class User implements Serializable {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
-	private final Long userId;
+	private Long userId;
 	@Column(name = "userName")
-	private final String userName;
+	private String userName;
 	@Column(name = "address")
-	private final String address;
+	private String address;
 	@Column(name = "areaCode")
-	private final String areaCode;
+	private String areaCode;
 	@Column(name = "vaccinated")
-	private final boolean vaccinated;
+	private boolean vaccinated;
 
+	public User(){}
 	@JsonCreator
 	public User(@JsonProperty("userId") Long userId, @JsonProperty("userName") String userName,
 			@JsonProperty("address") String address, @JsonProperty("areaCode") String areaCode,
